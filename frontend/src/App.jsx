@@ -8,7 +8,7 @@ import Tooltip from "./Tooltip";
 import DataPage from "./DataPage";
 import { scoreColor, scoreClass, scoreLabel } from "./utils";
 
-const API = "http://localhost:8000";
+const API = "";
 const MAP_STYLES = {
   dark:  "https://tiles.openfreemap.org/styles/dark",
   light: "https://tiles.openfreemap.org/styles/positron",

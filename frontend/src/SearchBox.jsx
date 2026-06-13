@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 
-const API = "http://localhost:8000";
+const API = "";
 
 const EXAMPLES = [
   "Show pipes older than 120 years",
