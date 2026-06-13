@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sewershed — What we're building and why it matters</title>
+<style>
+  :root {
+    --ink: #0A0F1A; --ink-2: #1A2333; --muted: #5A6470; --rule: #D9DEE5;
+    --paper: #FFFFFF; --paper-2: #F4F7FB; --paper-3: #EAF1F8;
+    --accent: #0B5FA5; --accent-2: #14A0C8; --teal: #0F8E7B;
+    --warn: #B34700; --good: #1F7A3A; --red: #C0392B; --sea-glow: #6EC1E4;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink); background: var(--paper);
+    font-size: 16px; line-height: 1.6;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; }
+  h2 { font-size: 30px; margin: 2.2em 0 0.4em; letter-spacing: -0.3px; }
+  h2::after { content: ""; display: block; width: 56px; height: 3px; background: var(--accent-2); margin-top: 10px; border-radius: 1.5px; }
+  h3 { font-size: 20px; color: var(--accent); margin: 1.6em 0 0.3em; }
+  p { margin: 0.5em 0 1em; }
+  .muted { color: var(--muted); }
+  /* hero */
+  .hero { padding: 72px 0 48px; }
+  .eyebrow { font-size: 13px; color: var(--accent); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+  .hero h1 { font-size: 64px; margin: 12px 0 8px; letter-spacing: -2px; line-height: 1.0; }
+  .hero .sub { font-size: 22px; color: var(--muted); font-style: italic; margin-bottom: 28px; }
+  .tagline { border-left: 4px solid var(--accent-2); background: var(--paper-3); padding: 16px 20px; font-size: 18px; font-weight: 500; border-radius: 0 6px 6px 0; }
+  .tagline small { display: block; font-weight: 400; font-style: italic; color: var(--muted); margin-top: 6px; font-size: 15px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 28px 0 8px; }
+  .stat { background: var(--paper-2); border: 1px solid var(--rule); border-radius: 8px; padding: 18px; }
+  .stat .v { font-family: Georgia, serif; font-size: 36px; color: var(--accent); }
+  .stat .k { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+  /* cards */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .card { background: var(--paper-2); border: 1px solid var(--rule); border-radius: 8px; padding: 16px 18px; font-size: 15px; }
+  .card h4 { margin: 0 0 6px; font-family: Georgia, serif; font-size: 17px; color: var(--accent); font-weight: 700; }
+  .fig { margin: 24px 0 32px; }
+  .fig-cap { font-size: 13px; color: var(--muted); font-style: italic; text-align: center; margin-top: 8px; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0 24px; font-size: 14px; }
+  th, td { border: 1px solid var(--rule); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--paper-2); }
+  .callout { border-left: 3px solid var(--accent); background: var(--paper-3); padding: 14px 18px; border-radius: 0 6px 6px 0; margin: 16px 0; font-size: 15px; }
+  .footer { border-top: 1px solid var(--rule); margin-top: 64px; padding: 24px 0 48px; color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; }
+  @media (max-width: 700px) {
+    .stats, .grid2 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 44px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="eyebrow">Cyvl Hackathon 2026 · Project Summary</div>
+    <h1>Sewershed.</h1>
+    <div class="sub">Sequencing Somerville's next 30 years of digging, street by street.</div>
+    <div class="tagline">
+      The $1.29B regional CSO plan commits separation in Somerville’s catchments, plus tanks, tunnels, and conveyance routes — and the city opens streets constantly anyway. No tool decides which streets to open first, or what to bundle into each trench.
+      <small>Sewershed ranks every combined street by dig-readiness, using Cyvl's condition data and the city's own pipe network.</small>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="v">2,438</div><div class="k">pipe segments the city's own GIS labels "Combined" (55% of the sanitary network)</div></div>
+      <div class="stat"><div class="v">46.5%</div><div class="k">of Cyvl's 30ft street segments show utility-cut patching</div></div>
+      <div class="stat"><div class="v">$1.29B</div><div class="k">regional CSO Control Plan, with separation timelines of 13 to 33 years</div></div>
+    </div>
+  </header>
+
+  <!-- PROBLEM -->
+  <section>
+    <h2>The problem</h2>
+    <p>Somerville's sewers were built in the 1800s. Most streets still carry sewage and stormwater in one shared pipe. When it rains hard, that pipe overflows, and the mix discharges into the Alewife Brook and the Mystic River. These events are called combined sewer overflows, or CSOs.</p>
+
+    <div class="fig">
+      <svg width="100%" viewBox="0 0 800 210" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#14A0C8"/>
+          </marker>
+        </defs>
+        <!-- rain -->
+        <text x="90" y="24" text-anchor="middle" font-family="Georgia" font-size="15" fill="#0B5FA5">Heavy rain</text>
+        <g stroke="#6EC1E4" stroke-width="2">
+          <line x1="55" y1="34" x2="50" y2="52"/><line x1="75" y1="34" x2="70" y2="52"/>
+          <line x1="95" y1="34" x2="90" y2="52"/><line x1="115" y1="34" x2="110" y2="52"/>
+          <line x1="135" y1="34" x2="130" y2="52"/>
+        </g>
+        <!-- street -->
+        <rect x="20" y="60" width="160" height="30" fill="#1A2333"/>
+        <text x="100" y="80" text-anchor="middle" font-size="12" fill="#EAF2FA">street surface</text>
+        <!-- combined pipe -->
+        <rect x="20" y="110" width="160" height="42" rx="6" fill="#FFF3EB" stroke="#B34700" stroke-width="1.5"/>
+        <text x="100" y="128" text-anchor="middle" font-size="12" fill="#B34700">one combined pipe</text>
+        <text x="100" y="144" text-anchor="middle" font-size="12" fill="#B34700">sewage + stormwater</text>
+        <!-- arrow -->
+        <line x1="185" y1="131" x2="290" y2="131" stroke="#14A0C8" stroke-width="2.5" marker-end="url(#arr)"/>
+        <text x="237" y="120" text-anchor="middle" font-size="12" fill="#5A6470">capacity exceeded</text>
+        <!-- outfall -->
+        <rect x="295" y="108" width="130" height="46" rx="6" fill="#FFF3EB" stroke="#B34700" stroke-width="1.5"/>
+        <text x="360" y="135" text-anchor="middle" font-family="Georgia" font-size="14" fill="#B34700">CSO outfall</text>
+        <!-- arrow -->
+        <line x1="430" y1="131" x2="535" y2="131" stroke="#14A0C8" stroke-width="2.5" marker-end="url(#arr)"/>
+        <!-- river -->
+        <rect x="540" y="108" width="240" height="46" rx="6" fill="#EAF1F8" stroke="#0B5FA5" stroke-width="1.5"/>
+        <text x="660" y="130" text-anchor="middle" font-family="Georgia" font-size="14" fill="#0B5FA5">Alewife Brook · Mystic River</text>
+        <text x="660" y="146" text-anchor="middle" font-size="11" fill="#5A6470">untreated discharge during storms</text>
+        <!-- outfall ids -->
+        <text x="360" y="180" text-anchor="middle" font-size="12" fill="#5A6470">Somerville outfalls: SOM001A (Alewife) · SOM007A/MWR205A (Mystic)</text>
+      </svg>
+      <div class="fig-cap">How a combined sewer overflow happens.</div>
+    </div>
+
+    <p>The fix in the $1.29 billion regional plan is <strong>sewer separation</strong>: dig up the street, replace the one combined pipe with two (sewage in one, stormwater in the other). The plan commits about 103 acres of separation in Somerville’s catchments (8 on Alewife, 95 on Mystic — the 446-acre Charles share is Cambridge and Boston’s), chose storage tanks and tunnels for the rest, and adds conveyance routes and a microtunnel. Add the city’s rolling dig calendar — water mains, utility work, the repairs that already scarred 46.5% of street segments — and Somerville will be opening streets for decades.</p>
+
+    <div class="fig">
+      <svg width="100%" viewBox="0 0 800 190" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+        <!-- BEFORE -->
+        <text x="190" y="24" text-anchor="middle" font-family="Georgia" font-size="16" fill="#0A0F1A">Before: combined</text>
+        <rect x="60" y="40" width="260" height="26" fill="#1A2333"/>
+        <text x="190" y="58" text-anchor="middle" font-size="11" fill="#EAF2FA">street</text>
+        <rect x="110" y="90" width="160" height="40" rx="6" fill="#FFF3EB" stroke="#B34700" stroke-width="1.5"/>
+        <text x="190" y="114" text-anchor="middle" font-size="12" fill="#B34700">sewage + storm</text>
+        <text x="190" y="165" text-anchor="middle" font-size="12" fill="#C0392B">overflows when it rains</text>
+
+        <!-- divider arrow -->
+        <line x1="360" y1="95" x2="430" y2="95" stroke="#14A0C8" stroke-width="2.5" marker-end="url(#arr)"/>
+        <text x="395" y="82" text-anchor="middle" font-size="11" fill="#5A6470">dig once</text>
+
+        <!-- AFTER -->
+        <text x="610" y="24" text-anchor="middle" font-family="Georgia" font-size="16" fill="#0A0F1A">After: separated</text>
+        <rect x="480" y="40" width="260" height="26" fill="#1A2333"/>
+        <text x="610" y="58" text-anchor="middle" font-size="11" fill="#EAF2FA">rebuilt street (+ ramps, sidewalk, bike lane)</text>
+        <rect x="500" y="90" width="100" height="40" rx="6" fill="#EAF6EE" stroke="#1F7A3A" stroke-width="1.5"/>
+        <text x="550" y="114" text-anchor="middle" font-size="12" fill="#1F7A3A">sewage</text>
+        <rect x="640" y="90" width="100" height="40" rx="6" fill="#EAF1F8" stroke="#0B5FA5" stroke-width="1.5"/>
+        <text x="690" y="114" text-anchor="middle" font-size="12" fill="#0B5FA5">stormwater</text>
+        <text x="610" y="165" text-anchor="middle" font-size="12" fill="#1F7A3A">no overflow, plus a better street on top</text>
+      </svg>
+      <div class="fig-cap">Separation replaces one combined pipe with two, and the open trench is a chance to rebuild the street above it.</div>
+    </div>
+
+    <p><strong>The gap:</strong> the regional plan decides how much to separate per watershed. It says nothing about which specific streets to dig in which order. Somerville just finished a three-year separation in Spring Hill, where the city used the open streets to add bike lanes, raised crosswalks, and rain gardens, all coordinated manually. Highland Avenue is next. Thirty more years of digging follow, and the sequencing is still done by hand.</p>
+  </section>
+
+  <!-- WHAT WE BUILD -->
+  <section>
+    <h2>What we're building</h2>
+    <p>Sewershed is a map tool that ranks every still-combined street in Somerville by <strong>separation-readiness</strong>: how smart it would be to dig that street next. The ranking comes from joining two real datasets that have never been combined:</p>
+    <ul>
+      <li><strong>The city's own sewer GIS</strong> — 7 catchment areas, every pipe with its type (2,438 segments are explicitly labeled "Combined"), install dates back to the 1800s, manhole depths.</li>
+      <li><strong>Cyvl's street-level scan</strong> — pavement condition every 30 feet, utility-cut patching (46.5% of segments), sidewalk condition, ADA ramps, catch basins, and a street photo of every asset.</li>
+    </ul>
+
+    <div class="fig">
+      <svg width="100%" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+        <defs>
+          <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#14A0C8"/>
+          </marker>
+        </defs>
+        <!-- inputs -->
+        <rect x="20" y="20" width="220" height="74" rx="8" fill="#EAF1F8" stroke="#0B5FA5"/>
+        <text x="130" y="45" text-anchor="middle" font-family="Georgia" font-size="14" fill="#0A0F1A">City sewer GIS</text>
+        <text x="130" y="64" text-anchor="middle" font-size="11" fill="#1A2333">catchments · pipe types · ages</text>
+        <text x="130" y="80" text-anchor="middle" font-size="11" fill="#1A2333">manhole depths</text>
+
+        <rect x="20" y="110" width="220" height="74" rx="8" fill="#EAF1F8" stroke="#14A0C8"/>
+        <text x="130" y="135" text-anchor="middle" font-family="Georgia" font-size="14" fill="#0A0F1A">Cyvl street scan</text>
+        <text x="130" y="154" text-anchor="middle" font-size="11" fill="#1A2333">pavement · patching · sidewalks</text>
+        <text x="130" y="170" text-anchor="middle" font-size="11" fill="#1A2333">ramps · photos</text>
+
+        <rect x="20" y="200" width="220" height="74" rx="8" fill="#F4F7FB" stroke="#D9DEE5"/>
+        <text x="130" y="225" text-anchor="middle" font-family="Georgia" font-size="14" fill="#0A0F1A">311 complaints</text>
+        <text x="130" y="244" text-anchor="middle" font-size="11" fill="#1A2333">sewer + flooding reports</text>
+        <text x="130" y="260" text-anchor="middle" font-size="11" fill="#1A2333">used as validation only</text>
+
+        <!-- arrows to engine -->
+        <line x1="245" y1="57" x2="320" y2="130" stroke="#14A0C8" stroke-width="2" marker-end="url(#arr2)"/>
+        <line x1="245" y1="147" x2="320" y2="147" stroke="#14A0C8" stroke-width="2" marker-end="url(#arr2)"/>
+        <line x1="245" y1="237" x2="320" y2="165" stroke="#14A0C8" stroke-width="2" marker-end="url(#arr2)"/>
+
+        <!-- engine -->
+        <rect x="325" y="105" width="180" height="86" rx="8" fill="#0E2A4A"/>
+        <text x="415" y="138" text-anchor="middle" font-family="Georgia" font-size="15" fill="#EAF2FA">Readiness score</text>
+        <text x="415" y="158" text-anchor="middle" font-size="11" fill="#BED2E6">0–100 per street segment</text>
+        <text x="415" y="174" text-anchor="middle" font-size="11" fill="#BED2E6">weights visible and editable</text>
+
+        <!-- arrows to outputs -->
+        <line x1="510" y1="125" x2="575" y2="60" stroke="#14A0C8" stroke-width="2" marker-end="url(#arr2)"/>
+        <line x1="510" y1="147" x2="575" y2="147" stroke="#14A0C8" stroke-width="2" marker-end="url(#arr2)"/>
+        <line x1="510" y1="170" x2="575" y2="235" stroke="#14A0C8" stroke-width="2" marker-end="url(#arr2)"/>
+
+        <!-- outputs -->
+        <rect x="580" y="25" width="200" height="64" rx="8" fill="#EAF6EE" stroke="#1F7A3A"/>
+        <text x="680" y="50" text-anchor="middle" font-family="Georgia" font-size="13" fill="#0A0F1A">Interactive map</text>
+        <text x="680" y="68" text-anchor="middle" font-size="11" fill="#1A2333">red = still combined · dig order</text>
+
+        <rect x="580" y="115" width="200" height="64" rx="8" fill="#EAF6EE" stroke="#1F7A3A"/>
+        <text x="680" y="140" text-anchor="middle" font-family="Georgia" font-size="13" fill="#0A0F1A">30-year time-lapse</text>
+        <text x="680" y="158" text-anchor="middle" font-size="11" fill="#1A2333">with dig-once savings counter</text>
+
+        <rect x="580" y="205" width="200" height="64" rx="8" fill="#EAF6EE" stroke="#1F7A3A"/>
+        <text x="680" y="230" text-anchor="middle" font-family="Georgia" font-size="13" fill="#0A0F1A">Capital plan export</text>
+        <text x="680" y="248" text-anchor="middle" font-size="11" fill="#1A2333">CSV · GeoJSON · DXF (CAD)</text>
+      </svg>
+      <div class="fig-cap">Two datasets joined into one score, three outputs a city can act on.</div>
+    </div>
+
+    <h3>How a street earns its rank</h3>
+    <div class="fig">
+      <svg width="100%" viewBox="0 0 800 170" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+        <!-- weight bars -->
+        <g font-size="13" fill="#1A2333">
+          <text x="10" y="30">Dig-once urgency (pavement already failing)</text>
+          <rect x="420" y="18" width="270" height="16" rx="3" fill="#0B5FA5"/>
+          <text x="700" y="31" font-size="12" fill="#5A6470">30%</text>
+
+          <text x="10" y="60">Pipe age and lining state</text>
+          <rect x="420" y="48" width="225" height="16" rx="3" fill="#14A0C8"/>
+          <text x="655" y="61" font-size="12" fill="#5A6470">25%</text>
+
+          <text x="10" y="90">Excavation cost (depth, utility congestion)</text>
+          <rect x="420" y="78" width="180" height="16" rx="3" fill="#6EC1E4"/>
+          <text x="610" y="91" font-size="12" fill="#5A6470">20%</text>
+
+          <text x="10" y="120">Bundling value (sidewalk, ramps in same trench)</text>
+          <rect x="420" y="108" width="135" height="16" rx="3" fill="#0F8E7B"/>
+          <text x="565" y="121" font-size="12" fill="#5A6470">15%</text>
+
+          <text x="10" y="150">Network leverage (completes a separated run)</text>
+          <rect x="420" y="138" width="90" height="16" rx="3" fill="#C19B2E"/>
+          <text x="520" y="151" font-size="12" fill="#5A6470">10%</text>
+        </g>
+      </svg>
+      <div class="fig-cap">Five weighted factors. Every input is a named field in real data, and the weights are editable in the interface.</div>
+    </div>
+
+    <div class="callout">
+      <strong>Scope boundary:</strong> we do not claim CSO volume reductions per street. Separation only pays off once a whole catchment is finished. What we optimize is the order: lowest cost, least disruption, most bundled value per dig.
+    </div>
+  </section>
+
+  <!-- IMPACT -->
+  <section>
+    <h2>How it impacts the city</h2>
+
+    <div class="fig">
+      <svg width="100%" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+        <text x="400" y="26" text-anchor="middle" font-family="Georgia" font-size="16" fill="#0A0F1A">One trench, four fixes</text>
+        <!-- trench -->
+        <rect x="100" y="50" width="600" height="34" fill="#1A2333" rx="4"/>
+        <text x="400" y="72" text-anchor="middle" font-size="12" fill="#EAF2FA">the street is open anyway</text>
+        <!-- four boxes below -->
+        <g font-size="12">
+          <rect x="100" y="110" width="135" height="58" rx="6" fill="#EAF6EE" stroke="#1F7A3A"/>
+          <text x="167" y="134" text-anchor="middle" fill="#0A0F1A">sewer separated</text>
+          <text x="167" y="152" text-anchor="middle" fill="#5A6470">the actual job</text>
+
+          <rect x="255" y="110" width="135" height="58" rx="6" fill="#EAF1F8" stroke="#0B5FA5"/>
+          <text x="322" y="134" text-anchor="middle" fill="#0A0F1A">street repaved</text>
+          <text x="322" y="152" text-anchor="middle" fill="#5A6470">was failing anyway</text>
+
+          <rect x="410" y="110" width="135" height="58" rx="6" fill="#EAF1F8" stroke="#0B5FA5"/>
+          <text x="477" y="134" text-anchor="middle" fill="#0A0F1A">ADA ramp added</text>
+          <text x="477" y="152" text-anchor="middle" fill="#5A6470">$75M backlog dent</text>
+
+          <rect x="565" y="110" width="135" height="58" rx="6" fill="#EAF1F8" stroke="#0B5FA5"/>
+          <text x="632" y="134" text-anchor="middle" fill="#0A0F1A">sidewalk rebuilt</text>
+          <text x="632" y="152" text-anchor="middle" fill="#5A6470">flagged by condition index</text>
+        </g>
+        <line x1="167" y1="88" x2="167" y2="106" stroke="#14A0C8" stroke-width="2"/>
+        <line x1="322" y1="88" x2="322" y2="106" stroke="#14A0C8" stroke-width="2"/>
+        <line x1="477" y1="88" x2="477" y2="106" stroke="#14A0C8" stroke-width="2"/>
+        <line x1="632" y1="88" x2="632" y2="106" stroke="#14A0C8" stroke-width="2"/>
+      </svg>
+      <div class="fig-cap">Bundling: when the dig order is chosen well, each excavation fixes several problems at once. Spring Hill proved this works; Sewershed makes it systematic.</div>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><h4>Money</h4>Utility cuts measurably shorten pavement life — Los Angeles documented arterial life falling from 25 to 16.5 years, Phoenix measured a 4.5-year loss per cut street. Our modeled envelope: roughly $5–10M on the committed separation work alone — about 7–10% of the street-work segment we actually touch (most of the budget buys tanks and tunnels, where software saves nothing) — and the same bundling engine applies to every street the city opens for any reason. The mechanism: never tearing up fresh asphalt, always digging where repaving was due anyway.</div>
+      <div class="card"><h4>Rivers</h4>The order doesn't change what separation achieves, but it changes how fast catchments complete. Finishing whole catchments sooner brings forward the day each outfall stops discharging into the Alewife and the Mystic.</div>
+      <div class="card"><h4>Accessibility</h4>Somerville's ADA backlog is estimated at $75 million against roughly $1 million a year in dedicated funds. Every separation trench that also installs a ramp or rebuilds a failing sidewalk chips at that backlog with money that was being spent regardless.</div>
+      <div class="card"><h4>Residents</h4>Streets get dug once instead of repeatedly. We test the ranking against 311 complaints: if the streets residents already report for sewer and flooding problems cluster where the model points, the loudest pain gets addressed earliest.</div>
+    </div>
+
+    <h3>Beyond Somerville</h3>
+    <p>Boston runs the same CSO program on the same rivers, two miles downstream. The method (city pipe GIS plus Cyvl street scan plus a readiness score) transfers to Boston's outfalls without changes. It also slots next to Boston's existing COBUCS coordination system: COBUCS manages when utilities dig, Sewershed decides which streets deserve the dig first.</p>
+  </section>
+
+  <!-- DATA -->
+  <section>
+    <h2>The data behind it</h2>
+    <p>Everything is real and already verified. The brief says mock data scores lower; we use none.</p>
+    <table>
+      <tr><th>Source</th><th>What we use</th><th>Status</th></tr>
+      <tr><td>Somerville sewer GIS (public)</td><td>7 catchments, 4,447 sanitary + 1,983 storm pipe segments, pipe types and ages, manhole depths, 3,659 storm inlets, 27 outfalls</td><td>Downloaded, on disk</td></tr>
+      <tr><td>Cyvl platform</td><td>Pavement scores every 30 ft, 13 distress layers, 841 manholes, 381 catch basins, 748 ADA ramps, 227k ft of sidewalk, street photo of every asset, semantic image search</td><td>Verified in platform + API</td></tr>
+      <tr><td>Somerville 311 (public)</td><td>Sewer and flooding complaints</td><td>Validation overlay</td></tr>
+      <tr><td>City sidewalk inventory</td><td>The city's own sidewalk condition index per segment</td><td>Downloaded, on disk</td></tr>
+    </table>
+  </section>
+
+  <!-- DEMO -->
+  <section>
+    <h2>What the demo looks like</h2>
+    <div class="grid2">
+      <div class="card"><h4>1 · The red city</h4>All of Somerville with every still-combined pipe in red, separated streets in green. One overlaid number: 2,438 segments to go.</div>
+      <div class="card"><h4>2 · Thirty years in ten seconds</h4>Press play and streets flip red to green in optimal dig order while a year counter runs 2026 to 2056 and a savings counter accumulates dollars from coordinated digs.</div>
+      <div class="card"><h4>3 · The evidence card</h4>Click street #1: pavement score 38, pipe installed 1924, shallow cut, failing sidewalk and missing ramp on the block, with the actual Cyvl street photo.</div>
+      <div class="card"><h4>4 · Ask-the-city search</h4>Type "fresh trench patch" and Cyvl's image search returns real Somerville photos in seconds. Overlay 311 complaints to test whether they cluster on our top-ranked streets.</div>
+      <div class="card"><h4>5 · The deliverable</h4>Hit export and open the DXF live in Autodesk Viewer. This is the file a civil-engineering consultant actually receives.</div>
+      <div class="card"><h4>Reliability</h4>Everything runs offline from precomputed data. The only two live-network steps have screen-recording backups.</div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>Sewershed · Cyvl Hackathon 2026 · Somerville, MA</span>
+    <span>Prepared 2026-06-12</span>
+  </footer>
+
+</div>
+</body>
+</html>
