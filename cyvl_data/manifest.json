@@ -1,0 +1,36 @@
+{
+  "source": "cyvl-spatial-sdk scene 'somerville'",
+  "layers": [
+    {
+      "layer": "assets",
+      "features": 8254,
+      "file": "assets.geojson"
+    },
+    {
+      "layer": "distresses",
+      "features": 84612,
+      "file": "distresses.geojson"
+    },
+    {
+      "layer": "markings",
+      "features": 7116,
+      "file": "markings.geojson"
+    },
+    {
+      "layer": "pavements",
+      "features": 5080,
+      "file": "pavements.geojson"
+    },
+    {
+      "layer": "rollup",
+      "features": 894,
+      "file": "rollup.geojson"
+    },
+    {
+      "layer": "signs",
+      "features": 3782,
+      "file": "signs.geojson"
+    }
+  ],
+  "note": "vector feature layers only; 311,784 camera frames + 514 LiDAR tiles are streamed on demand via the SDK, not bulk-exported"
+}
