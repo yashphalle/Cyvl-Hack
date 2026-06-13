@@ -1,25 +1,17 @@
 import Tooltip from "./Tooltip";
 
-const PRIORITIES = [
-  { key: "high",   label: "High",   color: "var(--red)",   dim: "var(--red-dim)",   border: "rgba(239,68,68,0.25)" },
-  { key: "medium", label: "Medium", color: "var(--amber)", dim: "var(--amber-dim)", border: "rgba(245,158,11,0.25)" },
-  { key: "low",    label: "Low",    color: "var(--green)", dim: "var(--green-dim)", border: "rgba(34,197,94,0.25)" },
-];
-
 const LAYERS = [
-  { key: "pipes",       label: "Sewer pipes",    icon: "━", info: "2,404 combined sewer segments colored by separation readiness score (0–100). Red = high priority, amber = medium, green = low." },
+  { key: "pipes",       label: "Construction Criticality", icon: "━", info: "2,404 segments scored 0–100 by construction criticality — aggregated from road condition, pipe age, dig cost, bundling value, and network position. Red = most critical, green = least." },
+  { key: "roads",       label: "Road condition",  icon: "━", info: "5,080 road segments scanned by Cyvl, colored by pavement score. Red = failing, amber = fair, green = good. Bad road over a high-priority sewer = dig now." },
+  { key: "sewerNet",   label: "Sewer pipeline",   icon: "━", info: "Raw sewer network — all combined sewer pipes shown in a single color for spatial reference. Use alongside other layers to see where the sewer system runs." },
   { key: "heatmap",    label: "Heat map",         icon: "◈", info: "Density heatmap weighted by readiness score — bright red zones have high concentrations of urgent pipes. Best used with sewer pipes off to see city-wide hotspots." },
   { key: "waterMains", label: "Water pipes",      icon: "━", info: "8,028 water distribution pipes across Somerville shown in blue. Where water pipes overlap sewer pipes, one trench can fix both." },
   { key: "waterRisk",  label: "Water pipe risk",  icon: "━", info: "2,061 water pipes colored by city risk model. Red = Failing, orange = High Risk, amber = Needs monitoring, green = Low Risk. Red overlap with red sewer = top dig-once target." },
-  { key: "roads",       label: "Road condition",  icon: "━", info: "5,080 road segments scanned by Cyvl, colored by pavement score. Red = failing, amber = fair, green = good. Bad road over a high-priority sewer = dig now." },
-  { key: "catchments",  label: "Catchments",      icon: "▣", info: "The 7 sewer drainage areas in Somerville. Each must be fully separated before CSO discharges to that waterway can stop." },
   { key: "stormInlets", label: "Storm drains",    icon: "◉", info: "3,659 catch basins and storm drains. Dense clusters = high runoff areas, good candidates for bundled separation work." },
+  { key: "catchments",  label: "Catchments",      icon: "▣", info: "The 7 sewer drainage areas in Somerville. Each must be fully separated before CSO discharges to that waterway can stop." },
 ];
 
 export default function FilterPanel({ filters, onFiltersChange, layers, onLayersChange }) {
-  const toggle = (key) =>
-    onFiltersChange({ ...filters, priorities: { ...filters.priorities, [key]: !filters.priorities[key] } });
-
   const setScore = (val) =>
     onFiltersChange({ ...filters, minScore: Number(val) });
 
@@ -31,34 +23,6 @@ export default function FilterPanel({ filters, onFiltersChange, layers, onLayers
 
   return (
     <div className="filter-panel">
-
-      {/* priority toggles */}
-      <div className="fp-section">
-        <div className="fp-label">
-          Priority
-          <Tooltip text="Filter pipes by readiness tier. High ≥50, Medium 35–50, Low <35. Based on the weighted 5-factor score." />
-        </div>
-        <div className="fp-pills">
-          {PRIORITIES.map(p => {
-            const active = filters.priorities[p.key];
-            return (
-              <button
-                key={p.key}
-                className="fp-pill"
-                onClick={() => toggle(p.key)}
-                style={{
-                  background:  active ? p.dim : "transparent",
-                  color:       active ? p.color : "var(--text-3)",
-                  borderColor: active ? p.border : "var(--border)",
-                }}
-              >
-                <span className="fp-dot" style={{ background: active ? p.color : "var(--text-3)" }} />
-                {p.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
       {/* score range */}
       <div className="fp-section">

@@ -9,7 +9,37 @@ const EXAMPLES = [
   "Pipes installed before 1920",
 ];
 
-export default function SearchBox({ onResult }) {
+function buildAnswer(data, count) {
+  // For pure factual questions (no filters), trust Claude's answer
+  if (!data.filters && data.answer) return data.answer;
+
+  const f = data.filters ?? {};
+  const parts = [];
+
+  // priority tiers
+  const p = f.priorities ?? { high: true, medium: true, low: true };
+  const tiers = [p.high && "high", p.medium && "medium", p.low && "low"].filter(Boolean);
+  if (tiers.length < 3) parts.push(tiers.join(" + ") + " priority");
+
+  // score
+  if (f.minScore > 0) parts.push(`score ≥ ${f.minScore}`);
+
+  // age
+  if (f.minAge > 0 && f.maxAge && f.maxAge < 999) parts.push(`age ${f.minAge}–${f.maxAge} yrs`);
+  else if (f.minAge > 0) parts.push(`older than ${f.minAge} yrs`);
+  else if (f.maxAge && f.maxAge < 999) parts.push(`younger than ${f.maxAge} yrs`);
+
+  // pci
+  if (f.minPci > 0 || (f.maxPci && f.maxPci < 100)) parts.push(`PCI ${f.minPci ?? 0}–${f.maxPci ?? 100}`);
+
+  // street
+  if (f.street) parts.push(`on "${f.street}"`);
+
+  const desc = parts.length ? parts.join(", ") : "all pipes";
+  return `Showing ${count.toLocaleString()} segments — ${desc}`;
+}
+
+export default function SearchBox({ onResult, visibleCount }) {
   const [query, setQuery]     = useState("");
   const [loading, setLoading] = useState(false);
   const [answer, setAnswer]   = useState(null);
@@ -31,12 +61,17 @@ export default function SearchBox({ onResult }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: text }),
       });
-      if (!res.ok) throw new Error(`Server error ${res.status}`);
+      if (!res.ok) throw new Error(`${res.status}`);
       const data = await res.json();
-      if (data.answer) setAnswer(data.answer);
+      setAnswer(data);
       onResult(data);
     } catch (e) {
-      setError("Search failed — check your API key");
+      const code = e.message;
+      setError(
+        code === "401" ? "API key invalid or expired" :
+        code === "500" ? "Backend error — check server logs" :
+        "Cannot reach backend at localhost:8000"
+      );
     } finally {
       setLoading(false);
       setFocused(false);
@@ -111,7 +146,7 @@ export default function SearchBox({ onResult }) {
       {answer && (
         <div className="search-answer">
           <span className="answer-icon">◈</span>
-          <span>{answer}</span>
+          <span>{buildAnswer(answer, visibleCount)}</span>
           <button className="answer-clear" onClick={clear}>✕</button>
         </div>
       )}

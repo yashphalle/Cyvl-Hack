@@ -10,6 +10,7 @@ Factors and weights:
   F4 bundling assets   12%
   F5 network leverage   8%
   F6 water co-risk     12%
+  + catch basin bonus  up to +5 pts (on top of weighted score)
 """
 import json
 import math
@@ -60,6 +61,10 @@ print("Loading water pipe risk...")
 water_risk_feats = load(SEWER / "water_pipe_risk.geojson")
 print(f"  {len(water_risk_feats)} water pipe risk segments")
 
+print("Loading storm inlets (catch basins)...")
+inlet_feats = load(SEWER / "storm_inlets.geojson")
+print(f"  {len(inlet_feats)} storm inlets")
+
 # ── spatial indices ───────────────────────────────────────────────────────────
 
 print("Building spatial indices...")
@@ -75,6 +80,10 @@ img_tree         = STRtree(img_geoms)
 
 water_risk_geoms = [shape(f["geometry"]) for f in water_risk_feats]
 water_risk_tree  = STRtree(water_risk_geoms)
+
+inlet_feats = [f for f in inlet_feats if f.get("geometry")]
+inlet_geoms = [shape(f["geometry"]) for f in inlet_feats]
+inlet_tree  = STRtree(inlet_geoms)
 
 # ── network topology for Factor 5 ─────────────────────────────────────────────
 
@@ -127,11 +136,14 @@ for feat in combined:
     # ── F3 (18%): dig cost — shallower is cheaper ────────────────────────────
     up    = props.get("UpstreamIn") or 0
     down  = props.get("Downstream") or 0
+    # 9999 is a sentinel meaning no data — treat as missing
+    up    = 0 if up   == 9999 else up
+    down  = 0 if down == 9999 else down
     depth = max(up, down)
     if depth > 0:
         f3 = 1.0 - normalize(depth, 0, 30)
     else:
-        f3 = 0.5
+        f3 = 1.0 - normalize(20, 0, 30)  # assume 20ft default when unknown
 
     # ── F4 (12%): bundling value — more assets nearby = higher score ──────────
     nearby_assets = asset_tree.query(buf)
@@ -167,6 +179,13 @@ for feat in combined:
         1,
     )
 
+    # ── catch basin bonus: up to +5 pts ──────────────────────────────────────
+    # Each storm inlet within 50m needs to be physically rerouted during separation.
+    # 3+ inlets = full bonus, scales linearly below that.
+    nearby_inlets = len(inlet_tree.query(buf))
+    cb_bonus = round(min(5.0, nearby_inlets * (5.0 / 3)), 1)
+    score = min(100.0, round(score + cb_bonus, 1))
+
     # ── nearest evidence image ────────────────────────────────────────────────
     nearby_imgs = img_tree.query(buf)
     image_url = None
@@ -193,6 +212,8 @@ for feat in combined:
             "asset_count":      asset_count,
             "network_leverage": connected_sep,
             "water_risk_quad":  water_quad,
+            "catch_basin_count": nearby_inlets,
+            "catch_basin_bonus": cb_bonus,
             "image_url":        image_url,
             "from_mh":          from_mh,
             "to_mh":            to_mh,

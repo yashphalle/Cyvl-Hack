@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { createPortal } from "react-dom";
 
 export default function Tooltip({ text }) {
   const [visible, setVisible] = useState(false);
@@ -22,13 +23,14 @@ export default function Tooltip({ text }) {
         onMouseLeave={() => setVisible(false)}
       >?</span>
 
-      {visible && (
+      {visible && createPortal(
         <div
           className="info-popup"
           style={{ left: pos.x, top: pos.y }}
         >
           {text}
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

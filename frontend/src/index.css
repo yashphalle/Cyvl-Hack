@@ -78,37 +78,50 @@ body {
   font-size: 18px; font-weight: 800;
   letter-spacing: -0.6px; color: #fff; line-height: 1;
 }
-.topbar-brand .logo span { color: var(--blue); }
+.topbar-brand .logo span { color: #1e4d8c; }
 .topbar-brand .sub {
   font-size: 10px; color: var(--text-3);
   letter-spacing: 0.5px; text-transform: uppercase;
 }
 
-.topbar-stats { display: flex; gap: 6px; flex: 1; }
-
-.stat-chip {
-  display: flex; align-items: center; gap: 8px;
-  padding: 6px 12px; border-radius: 8px;
-  border: 1px solid transparent;
-  transition: border-color 0.2s;
+.topbar-stats {
+  display: flex; align-items: center; flex: 1;
+  padding: 0 8px;
 }
-.stat-chip.red   { background: var(--red-dim);   border-color: rgba(239,68,68,0.2); }
-.stat-chip.amber { background: var(--amber-dim); border-color: rgba(245,158,11,0.2); }
-.stat-chip.green { background: var(--green-dim); border-color: rgba(34,197,94,0.2); }
-.stat-chip.blue  { background: var(--blue-dim);  border-color: rgba(20,160,200,0.2); }
 
-.stat-chip .chip-val {
-  font-size: 20px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums;
+.stat-metric {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 0 22px;
 }
-.stat-chip.red   .chip-val { color: var(--red); }
-.stat-chip.amber .chip-val { color: var(--amber); }
-.stat-chip.green .chip-val { color: var(--green); }
-.stat-chip.blue  .chip-val { color: var(--blue); }
+.stat-metric:first-child { padding-left: 8px; }
 
-.stat-chip .chip-lbl {
-  font-size: 10px; color: var(--text-2);
-  text-transform: uppercase; letter-spacing: 0.7px; line-height: 1.3;
+.stat-num {
+  font-size: 22px; font-weight: 800; line-height: 1;
+  font-variant-numeric: tabular-nums; letter-spacing: -0.5px;
 }
+.stat-num.red   { color: var(--red); }
+.stat-num.amber { color: var(--amber); }
+.stat-num.green { color: var(--green); }
+.stat-num.blue  { color: var(--text-2); }
+
+.stat-lbl {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--text-3);
+}
+
+.stat-sep {
+  width: 1px; height: 28px;
+  background: var(--border); flex-shrink: 0;
+}
+
+.stat-distrib {
+  display: flex; height: 3px; border-radius: 2px;
+  overflow: hidden; width: 100px;
+  margin-left: 20px; align-self: center; gap: 1px;
+  flex-shrink: 0;
+}
+.stat-distrib-seg { border-radius: 1px; opacity: 0.75; }
 
 /* ── info tooltip ────────────────────────────────────────────── */
 .info-btn {
@@ -476,10 +489,10 @@ body {
 .factor-label { font-size: 11px; color: var(--text-2); width: 110px; flex-shrink: 0; }
 .factor-weight { font-size: 10px; color: var(--text-3); width: 28px; flex-shrink: 0; text-align: right; }
 .factor-track {
-  flex: 1; height: 5px; background: rgba(255,255,255,0.07);
-  border-radius: 3px; overflow: hidden;
+  flex: 1; height: 6px; background: rgba(255,255,255,0.06);
+  border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.04);
 }
-.factor-fill { height: 100%; border-radius: 3px; transition: width 0.6s cubic-bezier(0.16,1,0.3,1); }
+.factor-fill { height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(0.16,1,0.3,1); opacity: 0.9; }
 .factor-val { font-size: 11px; font-weight: 700; color: var(--text); width: 26px; text-align: right; flex-shrink: 0; }
 
 /* pipe metadata */
@@ -516,3 +529,165 @@ body {
 .tt-score { font-size: 22px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
 .tt-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; margin-top: 1px; }
 .tt-street { font-size: 11px; color: var(--text-2); margin-top: 3px; }
+
+/* ── nav tabs ─────────────────────────────────────────────────── */
+.topbar-nav {
+  display: flex; gap: 2px;
+  margin-left: auto; margin-right: 16px;
+}
+.nav-tab {
+  background: none; border: none; cursor: pointer;
+  padding: 5px 14px; border-radius: 6px;
+  font-size: 13px; font-weight: 500; color: var(--text-2);
+  transition: all 0.15s;
+}
+.nav-tab:hover { color: var(--text); background: var(--surface-2); }
+.nav-tab.active { color: var(--text); background: var(--surface-2); }
+
+/* ── data page ───────────────────────────────────────────────── */
+.data-page {
+  position: fixed; inset: 58px 0 0 0;
+  background: var(--bg);
+  overflow-y: auto;
+  padding: 32px;
+  z-index: 10;
+}
+.dp-content {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+}
+.dp-col { display: flex; flex-direction: column; gap: 16px; }
+.dp-section-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--text-3);
+}
+.dp-tab-row { display: flex; gap: 4px; }
+.dp-tab {
+  flex: 1; padding: 8px; border-radius: 8px;
+  border: 1px solid var(--border); background: none;
+  font-size: 13px; color: var(--text-2); cursor: pointer;
+  transition: all 0.15s;
+}
+.dp-tab:hover { color: var(--text); border-color: var(--border-2); }
+.dp-tab.active {
+  background: var(--surface-2); color: var(--text);
+  border-color: var(--border-2);
+}
+
+/* drop zones */
+.dp-dropzones { display: flex; flex-direction: column; gap: 10px; }
+.drop-zone {
+  background: var(--surface); border: 1.5px dashed var(--border-2);
+  border-radius: 12px; padding: 14px 16px;
+  cursor: pointer; transition: all 0.15s;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--blue); background: var(--blue-dim);
+}
+.drop-zone.uploaded {
+  border-style: solid; border-color: rgba(34,197,94,0.4);
+  background: rgba(34,197,94,0.05);
+}
+.dz-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+.dz-icon { font-size: 20px; margin-top: 1px; flex-shrink: 0; }
+.dz-title { font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.dz-required {
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--blue);
+  border: 1px solid var(--blue); border-radius: 4px; padding: 1px 5px;
+}
+.dz-desc { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+.dz-check { margin-left: auto; font-size: 16px; color: var(--green); flex-shrink: 0; }
+.dz-prompt { font-size: 12px; color: var(--text-3); margin-bottom: 8px; }
+.dz-prompt u { color: var(--blue); cursor: pointer; }
+.dz-accepts { margin-left: 8px; font-size: 10px; color: var(--text-3); font-family: monospace; }
+.dz-file {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface-2); border-radius: 6px;
+  padding: 6px 10px; margin-bottom: 8px; font-size: 12px; color: var(--text);
+}
+.dz-file-icon { font-size: 14px; }
+.dz-file-name { flex: 1; }
+.dz-remove { background: none; border: none; cursor: pointer; color: var(--text-3); font-size: 12px; }
+.dz-remove:hover { color: var(--red); }
+.dz-fields { display: flex; flex-wrap: wrap; gap: 4px; }
+.dz-field-tag {
+  font-size: 10px; font-family: monospace;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 2px 6px; color: var(--text-3);
+}
+
+/* arcgis panel */
+.dp-arcgis { display: flex; flex-direction: column; gap: 16px; }
+.dp-arcgis-label { font-size: 12px; font-weight: 600; color: var(--text); }
+.dp-arcgis-hint { display: block; font-size: 11px; color: var(--text-3); font-weight: 400; margin-top: 2px; }
+.dp-arcgis-row { display: flex; gap: 8px; }
+.dp-arcgis-input {
+  flex: 1; background: var(--surface); border: 1px solid var(--border-2);
+  border-radius: 8px; padding: 10px 14px;
+  font-size: 12px; font-family: monospace; color: var(--text);
+  outline: none;
+}
+.dp-arcgis-input:focus { border-color: var(--blue); }
+.dp-arcgis-connect {
+  padding: 10px 18px; background: var(--blue); color: #fff;
+  border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+}
+.dp-arcgis-connect:disabled { opacity: 0.35; cursor: default; }
+.dp-arcgis-example {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px;
+}
+.dp-arcgis-ex-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); margin-bottom: 6px; }
+.dp-arcgis-code {
+  font-size: 11px; color: var(--blue); font-family: monospace;
+  cursor: pointer; word-break: break-all;
+}
+.dp-arcgis-code:hover { text-decoration: underline; }
+.dp-arcgis-layers { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.dp-arcgis-layers-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); margin-bottom: 10px; }
+.dp-arcgis-layer-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.dp-arcgis-layer-row:last-child { border-bottom: none; }
+.dp-layer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.dp-layer-id { font-size: 10px; font-family: monospace; color: var(--text-3); width: 50px; }
+.dp-layer-name { font-size: 12px; color: var(--text); flex: 1; }
+.dp-layer-status { font-size: 10px; color: var(--green); }
+
+/* scoring config */
+.dp-scoring-desc { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+.dp-weights { display: flex; flex-direction: column; gap: 14px; }
+.dp-weight-row { display: flex; flex-direction: column; gap: 6px; }
+.dp-weight-header { display: flex; align-items: center; gap: 8px; }
+.dp-weight-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dp-weight-label { font-size: 12px; font-weight: 600; color: var(--text); }
+.dp-weight-desc { font-size: 11px; color: var(--text-3); flex: 1; }
+.dp-weight-val { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.dp-weight-total {
+  font-size: 12px; font-weight: 600; margin-top: 4px;
+  padding: 8px 12px; border-radius: 6px;
+}
+.dp-weight-total.ok { color: var(--green); background: rgba(34,197,94,0.08); }
+.dp-weight-total.warn { color: var(--amber); background: rgba(245,158,11,0.08); }
+
+/* thresholds */
+.dp-thresholds { display: flex; flex-direction: column; gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.dp-threshold-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.dp-threshold-row:last-child { border-bottom: none; }
+.dp-thresh-label { font-size: 12px; color: var(--text-2); width: 160px; flex-shrink: 0; }
+.dp-thresh-val { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; width: 56px; flex-shrink: 0; }
+.dp-thresh-desc { font-size: 11px; color: var(--text-3); }
+
+/* run button */
+.dp-run-btn {
+  margin-top: 8px; padding: 14px; border-radius: 10px;
+  border: 1.5px solid var(--border-2); background: var(--surface);
+  font-size: 14px; font-weight: 700; color: var(--text-3);
+  cursor: not-allowed; transition: all 0.2s;
+}
+.dp-run-btn.active {
+  background: var(--blue); border-color: var(--blue);
+  color: #fff; cursor: pointer;
+}
+.dp-run-btn.active:hover { opacity: 0.9; }
+.dp-run-btn.done { background: var(--green); border-color: var(--green); color: #fff; }

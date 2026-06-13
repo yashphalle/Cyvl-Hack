@@ -5,6 +5,7 @@ import EvidenceCard from "./EvidenceCard";
 import FilterPanel from "./FilterPanel";
 import SearchBox from "./SearchBox";
 import Tooltip from "./Tooltip";
+import DataPage from "./DataPage";
 import { scoreColor, scoreClass, scoreLabel } from "./utils";
 
 const API = "http://localhost:8000";
@@ -20,7 +21,7 @@ const DEFAULT_FILTERS = {
   minScore: 0,
   minAge: 0,
 };
-const DEFAULT_LAYERS = { pipes: true, roads: false, catchments: false, stormInlets: false, heatmap: false, waterMains: false, waterRisk: false };
+const DEFAULT_LAYERS = { pipes: true, sewerNet: false, roads: false, catchments: false, stormInlets: false, heatmap: false, waterMains: false, waterRisk: false };
 
 function scoreToClass(s) {
   if (s >= 50) return "high";
@@ -68,6 +69,7 @@ export default function App() {
   const [filters, setFilters]         = useState(DEFAULT_FILTERS);
   const [layers, setLayers]           = useState(DEFAULT_LAYERS);
   const [flyTarget, setFlyTarget]     = useState(null);
+  const [page, setPage]               = useState("map"); // "map" | "data"
   const mapRef = useRef(null);
   const [catchmentGeo, setCatchmentGeo]   = useState(null);
   const [inletsGeo, setInletsGeo]         = useState(null);
@@ -209,35 +211,54 @@ export default function App() {
       {/* ── topbar ── */}
       <div className="topbar">
         <div className="topbar-brand">
-          <div className="logo">Sewer<span>shed</span></div>
+          <div className="logo">Bed<span>Rocked</span></div>
           <div className="sub">Somerville, MA</div>
         </div>
 
         {stats && (
           <div className="topbar-stats">
-            <div className="stat-chip red">
-              <div className="chip-val">{stats.high_priority}</div>
-              <div className="chip-lbl">High Priority <Tooltip text="Pipes with readiness score ≥50. Most urgent to separate — old pipes under failing pavement with bundling potential." /></div>
+            <div className="stat-metric">
+              <div className="stat-num red">{stats.high_priority}</div>
+              <div className="stat-lbl">Critical <Tooltip text="Segments with criticality score ≥50. Old pipes under failing pavement with high bundling potential — act now." /></div>
             </div>
-            <div className="stat-chip amber">
-              <div className="chip-val">{stats.medium_priority}</div>
-              <div className="chip-lbl">Medium Priority <Tooltip text="Pipes with readiness score 35–50. Good candidates once high-priority catchments are underway." /></div>
+            <div className="stat-sep" />
+            <div className="stat-metric">
+              <div className="stat-num amber">{stats.medium_priority.toLocaleString()}</div>
+              <div className="stat-lbl">Moderate <Tooltip text="Segments scoring 35–50. Good candidates once critical segments are underway." /></div>
             </div>
-            <div className="stat-chip green">
-              <div className="chip-val">{stats.low_priority}</div>
-              <div className="chip-lbl">Low Priority <Tooltip text="Pipes with readiness score <35. Newer pipes, shallower pavement condition, or already near separated segments." /></div>
+            <div className="stat-sep" />
+            <div className="stat-metric">
+              <div className="stat-num green">{stats.low_priority}</div>
+              <div className="stat-lbl">Low <Tooltip text="Segments scoring <35. Newer infrastructure or shallower pavement impact." /></div>
             </div>
-            <div className="stat-chip blue">
-              <div className="chip-val">{stats.total_segments.toLocaleString()}</div>
-              <div className="chip-lbl">Combined Pipes <Tooltip text="Total combined sewer segments in Somerville — carrying sewage and stormwater in one shared pipe. All need separation as part of the $1.29B CSO plan." /></div>
+            <div className="stat-sep" />
+            <div className="stat-metric">
+              <div className="stat-num blue">{stats.total_segments.toLocaleString()}</div>
+              <div className="stat-lbl">Segments <Tooltip text="Total segments scored for construction criticality across road, sewer, and water infrastructure." /></div>
+            </div>
+            <div className="stat-distrib">
+              <div className="stat-distrib-seg" style={{ flex: stats.high_priority,   background: "var(--red)" }} />
+              <div className="stat-distrib-seg" style={{ flex: stats.medium_priority, background: "var(--amber)" }} />
+              <div className="stat-distrib-seg" style={{ flex: stats.low_priority,    background: "var(--green)" }} />
             </div>
           </div>
         )}
+
+        <nav className="topbar-nav">
+          <button className={`nav-tab ${page === "map"  ? "active" : ""}`} onClick={() => setPage("map")}>Map</button>
+          <button className={`nav-tab ${page === "data" ? "active" : ""}`} onClick={() => setPage("data")}>Data</button>
+        </nav>
 
         <button className="theme-toggle" onClick={() => setTheme(isDark ? "light" : "dark")}>
           {isDark ? "☀ Light" : "☾ Dark"}
         </button>
       </div>
+
+      {/* ── data page ── */}
+      {page === "data" && <DataPage />}
+
+      {/* ── map view ── */}
+      {page === "map" && <>
 
       {/* ── loading ── */}
       {loading && (
@@ -262,6 +283,17 @@ export default function App() {
         >
           <NavigationControl position="top-left" style={{ top: 8 }} />
 
+
+          {/* raw sewer network (viz only) */}
+          {layers.sewerNet && geojson && (
+            <Source id="sewer-net" type="geojson" data={geojson}>
+              <Layer id="sewer-net-layer" type="line" paint={{
+                "line-color": "#92400e",
+                "line-width": ["interpolate", ["linear"], ["zoom"], 12, 1, 14, 2, 16, 3],
+                "line-opacity": 0.55,
+              }} />
+            </Source>
+          )}
 
           {/* road PCI layer */}
           {layers.roads && roadsGeo && (
@@ -350,17 +382,17 @@ export default function App() {
             <Source id="sewer-heat" type="geojson" data={filteredGeo}>
               <Layer id="pipe-heatmap" type="heatmap" paint={{
                 "heatmap-weight": ["interpolate", ["linear"], ["get", "score"], 0, 0, 100, 1],
-                "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 10, 0.6, 16, 2.5],
+                "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 10, 0.2, 13, 0.5, 16, 1.2],
                 "heatmap-color": [
                   "interpolate", ["linear"], ["heatmap-density"],
                   0,    "rgba(0,0,0,0)",
-                  0.15, "rgba(34,197,94,0.5)",
-                  0.4,  "rgba(245,158,11,0.75)",
-                  0.7,  "rgba(239,68,68,0.9)",
-                  1.0,  "rgba(255,80,30,1)",
+                  0.3,  "rgba(34,197,94,0.7)",
+                  0.6,  "rgba(245,158,11,0.85)",
+                  0.85, "rgba(239,68,68,0.95)",
+                  1.0,  "rgba(255,60,10,1)",
                 ],
-                "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 10, 25, 14, 45, 16, 70],
-                "heatmap-opacity": 0.88,
+                "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 10, 6, 13, 10, 15, 16, 17, 24],
+                "heatmap-opacity": 0.85,
               }} />
             </Source>
           )}
@@ -394,7 +426,7 @@ export default function App() {
       </div>
 
       {/* ── search box ── */}
-      <SearchBox onResult={onSearchResult} />
+      <SearchBox onResult={onSearchResult} visibleCount={visibleCount} />
 
       {/* ── filter panel ── */}
       <FilterPanel
@@ -407,7 +439,7 @@ export default function App() {
       {/* ── legend ── */}
       <div className="legend">
         <div className="legend-title">
-          Separation Readiness
+          Construction Criticality
           {visibleCount !== stats?.total_segments && (
             <span className="legend-count"> · {visibleCount.toLocaleString()} shown</span>
           )}
@@ -440,6 +472,8 @@ export default function App() {
           {tooltip.props.street_name && <div className="tt-street">{tooltip.props.street_name}</div>}
         </div>
       )}
+
+      </>}
     </>
   );
 }

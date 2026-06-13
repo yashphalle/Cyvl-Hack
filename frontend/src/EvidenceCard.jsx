@@ -2,19 +2,19 @@ import { scoreClass, scoreLabel } from "./utils";
 import Tooltip from "./Tooltip";
 
 const FACTOR_COLORS = {
-  f1: "#14a0c8",
-  f2: "#8b5cf6",
-  f3: "#f59e0b",
-  f4: "#22c55e",
-  f5: "#ec4899",
-  f6: "#ef4444",
+  f1: "#38bdf8",
+  f2: "#38bdf8",
+  f3: "#38bdf8",
+  f4: "#38bdf8",
+  f5: "#38bdf8",
+  f6: "#38bdf8",
 };
 
 const FACTOR_INFO = {
-  f1: { title: "Pavement urgency (30%)", body: "Average PCI score of road segments within 50m. Low PCI = failing pavement = high urgency to dig now and repave in the same trench." },
-  f2: { title: "Pipe age (25%)",         body: "Age of the pipe from install date. Older pipes are more likely to fail and are higher priority for separation. Max scale = 150 years." },
-  f3: { title: "Dig cost (20%)",         body: "Estimated excavation depth from invert elevations. Shallower pipes cost less to dig, making separation more economical." },
-  f4: { title: "Bundling value (15%)",   body: "Count of ADA ramps, catch basins, manholes, and sidewalks within 50m. More assets = more value from one open trench." },
+  f1: { title: "Pavement urgency (28%)", body: "Average PCI score of road segments within 50m. Low PCI = failing pavement = high urgency to dig now and repave in the same trench." },
+  f2: { title: "Pipe age (22%)",         body: "Age of the pipe from install date. Older pipes are more likely to fail and are higher priority for separation. Max scale = 150 years." },
+  f3: { title: "Dig cost (18%)",         body: "Estimated excavation depth from invert elevations. Shallower pipes cost less to dig, making separation more economical." },
+  f4: { title: "Bundling value (12%)",   body: "Count of ADA ramps, catch basins, manholes, and sidewalks within 50m. More assets = more value from one open trench." },
   f5: { title: "Network leverage (8%)",  body: "Whether this pipe's upstream or downstream manhole connects to an already-separated pipe. Completing connected runs finishes catchments faster." },
   f6: { title: "Water co-risk (12%)",    body: "Risk rating of the nearest water main from Somerville's water pipe risk model. A failing water main alongside a combined sewer is a prime dig-once opportunity — the city will need to excavate anyway." },
 };
@@ -26,10 +26,11 @@ const META_INFO = {
   "Diameter":      "Internal pipe diameter in inches. Larger pipes handle more flow but cost more to replace.",
   "Material":      "Pipe construction material. Older clay and brick pipes are more prone to infiltration and collapse.",
   "Assets nearby":  "Number of bundlable infrastructure assets (ADA ramps, catch basins, sidewalks) within 50m of this pipe.",
+  "Catch basins":   "Storm inlets within 50m that drain into this combined sewer. Each needs to be physically re-piped during separation. 3+ adds the full +5 pt bonus.",
   "Water risk":     "Risk quadrant of the nearest water main per Somerville DPW's pipe risk model. Failing = high likelihood AND high consequence of failure.",
 };
 
-const SCORE_INFO = "Weighted readiness score 0–100. Higher = more urgent and cost-effective to separate now. Combines pavement condition, pipe age, dig cost, bundling potential, network position, and water main co-risk.";
+const SCORE_INFO = "Construction criticality score 0–100. Higher = more critical to address now. Aggregated from road condition (PCI), pipe age, dig cost, asset bundling, network position, and water main co-risk.";
 
 const WATER_RISK_COLOR = {
   "Failing":                  "#ef4444",
@@ -108,11 +109,11 @@ export default function EvidenceCard({ feature, onClose }) {
           <span className={`score-badge ${sc}`}>{scoreLabel(p.score)}</span>
         </div>
 
-        <div className="card-section-title">Readiness Breakdown</div>
+        <div className="card-section-title">Criticality Breakdown</div>
         <div className="factors-list">
-          <FactorRow label="Pavement urgency" weight="30%" value={p.f1_pavement} colorKey="f1" />
-          <FactorRow label="Pipe age"         weight="25%" value={p.f2_age}      colorKey="f2" />
-          <FactorRow label="Dig cost"         weight="20%" value={p.f3_depth}    colorKey="f3" />
+          <FactorRow label="Pavement urgency" weight="28%" value={p.f1_pavement} colorKey="f1" />
+          <FactorRow label="Pipe age"         weight="22%" value={p.f2_age}      colorKey="f2" />
+          <FactorRow label="Dig cost"         weight="18%" value={p.f3_depth}    colorKey="f3" />
           <FactorRow label="Bundling value"   weight="12%" value={p.f4_bundling}   colorKey="f4" />
           <FactorRow label="Network leverage" weight="8%"  value={p.f5_network}   colorKey="f5" />
           <FactorRow label="Water co-risk"    weight="12%" value={p.f6_water_risk ?? 0} colorKey="f6" />
@@ -126,6 +127,7 @@ export default function EvidenceCard({ feature, onClose }) {
           <MetaItem label="Diameter"       value={p.diameter_in > 0 ? `${p.diameter_in}"` : "—"} />
           <MetaItem label="Material"       value={p.material || "—"} />
           <MetaItem label="Assets nearby"  value={p.asset_count} />
+          <MetaItem label="Catch basins"   value={p.catch_basin_count > 0 ? `${p.catch_basin_count} (+${p.catch_basin_bonus} pts)` : "0"} />
           {p.water_risk_quad && p.water_risk_quad !== "None" && (
             <div className="meta-item">
               <div className="m-label">
