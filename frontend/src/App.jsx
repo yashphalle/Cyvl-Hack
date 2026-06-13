@@ -214,6 +214,10 @@ export default function App() {
           <div className="logo">Bed<span>Rocked</span></div>
           <div className="sub">Somerville, MA</div>
         </div>
+        <div className="cyvl-source">
+          <span className="cyvl-dot">◉</span> Data from <b>Cyvl</b> street scan
+          <Tooltip text={<><strong>Live Cyvl data</strong>Pavement 5,080 · catch basins 381 · above-ground assets 8,254 · signs 3,782 · street-level imagery — pulled from Cyvl project f15b854a. Sewer network from Somerville GIS. Click any segment to see the live Cyvl scan photo.</>} />
+        </div>
 
         {stats && (
           <div className="topbar-stats">

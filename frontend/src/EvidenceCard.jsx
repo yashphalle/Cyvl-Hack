@@ -74,13 +74,24 @@ export default function EvidenceCard({ feature, onClose }) {
   if (!feature) return null;
   const p = feature.properties;
   const sc = scoreClass(p.score);
+  // verifiable Cyvl imagery provenance, parsed from the live CDN url
+  const cyvlHost = p.image_url ? p.image_url.replace(/^https?:\/\//, "").split("/")[0] : null;
+  const cyvlAsset = p.image_url
+    ? decodeURIComponent((p.image_url.split("/").slice(-2, -1)[0] || "").replace(/_/g, " "))
+    : null;
 
   return (
     <div className="evidence-card">
       <div className="card-img-wrap">
         <div className={`card-accent ${sc}`} />
         {p.image_url ? (
-          <img className="card-img" src={p.image_url} alt="Street view" />
+          <>
+            <img className="card-img" src={p.image_url} alt="Cyvl street-level scan" />
+            <a className="cyvl-scan-badge" href={p.image_url} target="_blank" rel="noopener noreferrer"
+               title="Opens the exact image live on Cyvl's CDN — proof this is Cyvl's scan, not stock.">
+              ◉ LIVE CYVL SCAN ↗
+            </a>
+          </>
         ) : (
           <div className="card-img-empty">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">
@@ -99,6 +110,14 @@ export default function EvidenceCard({ feature, onClose }) {
           <div className="card-street">{p.street_name || "Unnamed Segment"}</div>
           <div className="card-pipe-id">{p.id}</div>
         </div>
+
+        {p.image_url && (
+          <a className="cyvl-source-line" href={p.image_url} target="_blank" rel="noopener noreferrer">
+            <span className="cs-dot">◉</span>
+            <span>Source: <b>Cyvl scan</b>{cyvlAsset ? ` · ${cyvlAsset}` : ""}</span>
+            <span className="cs-host">{cyvlHost} ↗</span>
+          </a>
+        )}
 
         <div className="card-score-block">
           <div className="score-left">
