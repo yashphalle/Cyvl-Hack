@@ -1,0 +1,20 @@
+{
+  "street_segments": 2272,
+  "by_sewer_type": {
+    "combined": 1810,
+    "separated": 390,
+    "unknown": 72
+  },
+  "by_catchment": {
+    "C2": 875,
+    "S2": 632,
+    "CA": 385,
+    "A": 153,
+    "C1": 82,
+    "S1": 75,
+    "M": 64,
+    "\u2014": 6
+  },
+  "avg_manholes_per_segment": 4.45,
+  "total_inlets_attached": 8037
+}
